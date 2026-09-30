@@ -22,5 +22,7 @@
     "Import GifSnap for GifSnapGif and GifSnapClient. Import GifSnapUI for GifSnapPicker. Preserve these spellings; use the authored README or docs/quickstart.md if snippets conflict.",
     "GifSnapPicker(theme: .system, mediaType: .gif, pageSize: 24) { gif in ... } passes a GifSnapGif to the selection callback. Use gif.url for the full animated media URL.",
     "The SwiftUI picker requires iOS 16 or later. It uses an animation-capable native image view; AsyncImage alone does not animate GIFs. The API currently needs no key and has no published SLA."
-  ]
+  ],
+  "url": "https://context7.com/rowixgroup/gifsnap-swift",
+  "public_key": "pk_Q7FGqR8qqE2u7VACxiQA9"
 }
