@@ -17,10 +17,10 @@ In Xcode choose **File → Add Package Dependencies**, enter:
 https://github.com/rowixgroup/gifsnap-swift
 ```
 
-Select version **0.1.0** or a compatible later version. Add `GifSnapUI` and `GifSnap` to an iOS app, or just `GifSnap` for client-only use. With a `Package.swift` manifest:
+Select version **0.1.1** or a compatible later version. Add `GifSnapUI` and `GifSnap` to an iOS app, or just `GifSnap` for client-only use. With a `Package.swift` manifest:
 
 ```swift
-.package(url: "https://github.com/rowixgroup/gifsnap-swift.git", from: "0.1.0")
+.package(url: "https://github.com/rowixgroup/gifsnap-swift.git", from: "0.1.1")
 ```
 
 Add products to the consuming target:
@@ -57,7 +57,7 @@ struct ContentView: View {
 }
 ```
 
-The picker owns its scroll view; give it a bounded layout such as a sheet or the remaining area of a screen. It offers GIF/sticker tabs, a search field with a 300 ms debounce, explicit loading/empty/error/end states, manual load-more and retry buttons, source attribution, and light/dark/system appearance. The default page size is 24; values are clamped to 1...50. `initialQuery` is an initial value, not a binding. Pass a custom `client: any GifSnapAPI` to use your own service or deterministic fixtures.
+The picker owns its scroll view; give it a bounded layout such as a sheet or the remaining area of a screen. It offers GIF/sticker tabs, a search field with a 300 ms debounce, explicit loading/empty/error/end states, manual load-more and retry buttons, and light/dark/system appearance. The default page size is 24; values are clamped to 1...50. `initialQuery` is an initial value, not a binding. Pass a custom `client: any GifSnapAPI` to use your own service or deterministic fixtures.
 
 Rows retain their order on append. The picker removes duplicate exact IDs, exact full URL strings and matching optional `content_id` values. It keeps the first record and preserves its ID and URLs. Query strings are meaningful; they are never stripped. A duplicate-only page pauses for a manual next-page action rather than automatically fetching repeatedly. Selection does not dismiss the hosting sheet or send telemetry; the host decides what to do next.
 
@@ -120,7 +120,7 @@ There are no automatic retries. `Retry-After` seconds or HTTP dates are exposed 
 
 The full returned media URL is tried first, then a distinct preview URL once on failure, then a visible unavailable state. The preview can be static. Each card keeps a fixed media box while loading. Decoder thumbnails are constrained to 480×480 pixels, each active animation uses a 4 MiB frame-buffer budget, and a dedicated loader allows four downloads concurrently. Dedicated image-cache eviction budgets are 32 MiB in memory and 64 MiB on disk; these are cache targets, not a guarantee of total process memory use. GIF/WebP source downloads can be large. Animated assets are tested; video URLs are not supported by this picker.
 
-The view uses native buttons/text fields, accessible selection/source labels, Dynamic Type text and system colors. Reduce Motion stops animation while keeping media visible. Native image views stop playback when detached and cancel outstanding loads during teardown. Very long titles/source labels are truncated visually but the selection accessibility label includes them. Test extreme Dynamic Type and host-specific layouts in your app before shipping.
+The view uses native buttons/text fields, accessible selection labels, Dynamic Type text and system colors. Reduce Motion stops animation while keeping media visible. Native image views stop playback when detached and cancel outstanding loads during teardown. Very long titles are truncated visually but the selection accessibility label includes the full title. Provider labels are not displayed or read aloud by the picker; source metadata remains available on the selected record. Test extreme Dynamic Type and host-specific layouts in your app before shipping.
 
 The SDK adds no analytics or advertising. Searches go to the configured API, and media requests go to the returned CDN URLs; those services receive normal network request information. The API client and dedicated image loader omit cookie/credential stores. API/media rights, availability and provider terms are separate from the SDK's MIT license. Public API access is currently best-effort; this package makes no SLA, rate-limit or media-license promise.
 

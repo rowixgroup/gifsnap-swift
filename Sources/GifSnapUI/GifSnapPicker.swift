@@ -52,12 +52,10 @@ public enum GifSnapTheme: String, Sendable { case system, light, dark }
                                     .clipShape(RoundedRectangle(cornerRadius: 10))
                                 Text(item.title.isEmpty ? "Untitled GIF" : item.title)
                                     .font(.caption.weight(.medium)).lineLimit(1)
-                                Text("Source: \(item.source?.isEmpty == false ? item.source! : "Not specified")")
-                                    .font(.caption2).foregroundStyle(.secondary).lineLimit(1)
                             }.foregroundStyle(.primary).contentShape(Rectangle())
                         }
                         .buttonStyle(.plain)
-                        .accessibilityLabel("Select \(item.title.isEmpty ? "GIF" : item.title), source \(item.source ?? "not specified")")
+                        .accessibilityLabel("Select \(item.title.isEmpty ? "GIF" : item.title)")
                         .accessibilityIdentifier("gifsnap.item.\(item.id)")
                     }
                 }
