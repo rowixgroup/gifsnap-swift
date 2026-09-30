@@ -1,0 +1,6 @@
+.build/
+.swiftpm/
+DerivedData/
+evidence/
+Examples/PickerDemo/*.xcodeproj/
+.DS_Store

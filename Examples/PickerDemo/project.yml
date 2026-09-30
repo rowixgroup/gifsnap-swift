@@ -1,0 +1,50 @@
+name: PickerDemo
+options:
+  deploymentTarget:
+    iOS: '16.0'
+packages:
+  GifSnap:
+    path: ../..
+settings:
+  base:
+    SWIFT_VERSION: '5.9'
+    CODE_SIGNING_ALLOWED: NO
+targets:
+  PickerDemo:
+    type: application
+    platform: iOS
+    sources: [Sources]
+    info:
+      path: Generated/Info.plist
+      properties:
+        CFBundleDisplayName: GifSnap Demo
+        UILaunchScreen: {}
+        NSAppTransportSecurity:
+          NSAllowsLocalNetworking: true
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.rowix.gifsnap.demo
+        GENERATE_INFOPLIST_FILE: YES
+    dependencies:
+      - package: GifSnap
+        product: GifSnap
+      - package: GifSnap
+        product: GifSnapUI
+  PickerDemoUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources: [UITests]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.rowix.gifsnap.demo.uitests
+        GENERATE_INFOPLIST_FILE: YES
+    dependencies:
+      - target: PickerDemo
+schemes:
+  PickerDemo:
+    build:
+      targets:
+        PickerDemo: all
+        PickerDemoUITests: [test]
+    test:
+      targets: [PickerDemoUITests]
