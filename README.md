@@ -34,6 +34,8 @@ The Foundation target does not link the image dependency. SwiftPM may still reso
 
 ## SwiftUI quickstart
 
+For installation and a complete selection view in one page, see the [SwiftUI quickstart](docs/quickstart.md).
+
 ```swift
 import SwiftUI
 import GifSnap

@@ -1,0 +1,26 @@
+{
+  "$schema": "https://context7.com/schema/context7.json",
+  "projectTitle": "GifSnap for Swift",
+  "description": "GifSnap 0.1.1 Foundation API client and native SwiftUI GIF picker. Canonical repository: https://github.com/rowixgroup/gifsnap-swift.",
+  "folders": [
+    "docs"
+  ],
+  "excludeFolders": [
+    "Sources",
+    "Tests",
+    ".build",
+    "dist",
+    "evidence"
+  ],
+  "excludeFiles": [
+    "CHANGELOG.md",
+    "VERIFICATION.md",
+    "LICENSE"
+  ],
+  "rules": [
+    "Install SwiftPM package https://github.com/rowixgroup/gifsnap-swift.git from version 0.1.1. Products and modules are exactly GifSnap and GifSnapUI.",
+    "Import GifSnap for GifSnapGif and GifSnapClient. Import GifSnapUI for GifSnapPicker. Preserve these spellings; use the authored README or docs/quickstart.md if snippets conflict.",
+    "GifSnapPicker(theme: .system, mediaType: .gif, pageSize: 24) { gif in ... } passes a GifSnapGif to the selection callback. Use gif.url for the full animated media URL.",
+    "The SwiftUI picker requires iOS 16 or later. It uses an animation-capable native image view; AsyncImage alone does not animate GIFs. The API currently needs no key and has no published SLA."
+  ]
+}
