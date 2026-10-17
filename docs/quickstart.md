@@ -1,11 +1,11 @@
-# GifSnap 0.1.1 SwiftUI quickstart
+# GifSnap 0.1.2 SwiftUI quickstart
 
 The package repository is https://github.com/rowixgroup/gifsnap-swift. Its products are named `GifSnap` and `GifSnapUI`.
 
-In Xcode, add the repository URL with version 0.1.1 or later. Add both products to an iOS 16+ app target. With Swift Package Manager:
+In Xcode, add the repository URL with version 0.1.2 or later. Add both products to an iOS 16+ app target. With Swift Package Manager:
 
 ```swift
-.package(url: "https://github.com/rowixgroup/gifsnap-swift.git", from: "0.1.1")
+.package(url: "https://github.com/rowixgroup/gifsnap-swift.git", from: "0.1.2")
 ```
 
 Add these dependencies to the consuming target:
