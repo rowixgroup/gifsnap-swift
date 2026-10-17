@@ -17,10 +17,10 @@ In Xcode choose **File → Add Package Dependencies**, enter:
 https://github.com/rowixgroup/gifsnap-swift
 ```
 
-Select version **0.1.1** or a compatible later version. Add `GifSnapUI` and `GifSnap` to an iOS app, or just `GifSnap` for client-only use. With a `Package.swift` manifest:
+Select version **0.1.2** or a compatible later version. Add `GifSnapUI` and `GifSnap` to an iOS app, or just `GifSnap` for client-only use. With a `Package.swift` manifest:
 
 ```swift
-.package(url: "https://github.com/rowixgroup/gifsnap-swift.git", from: "0.1.1")
+.package(url: "https://github.com/rowixgroup/gifsnap-swift.git", from: "0.1.2")
 ```
 
 Add products to the consuming target:
@@ -86,7 +86,7 @@ let trendingStickers = try await client.trendingStickers(limit: 12)
 
 `GifSnapClient(baseURL:timeout:)` accepts an HTTP(S) base URL without credentials, query or fragment, and a timeout from 0.05 to 120 seconds. Default: `https://gifsnap.com/api/v1`. Prefer HTTPS; ordinary HTTP remains subject to the host app's App Transport Security policy. The SDK does not disable ATS. Page must be positive, limit must be 1...50, and search must contain non-whitespace text. Search text is trimmed and URL-encoded.
 
-Client responses are **not deduplicated**. Their `data` records and pagination counts are kept as returned, including duplicates. `GifSnapGif` exposes `id`, `title`, exact `url`/`previewURL` strings, `width`, `height`, `type`, optional `source` and optional opaque `contentID`. Unknown item fields are retained in `additionalFields` as `GifSnapJSON`; numeric unknown fields use `Double`. `GifSnapResponse` exposes `data`, `pagination` and optional `query`. Provider IDs are not interchangeable. Never use `contentID` in place of the returned lookup ID.
+Client responses are **not deduplicated**. Their `data` records and pagination counts are kept as returned, including duplicates. `GifSnapGif` exposes `id`, `title`, exact `url`/`previewURL` strings, `width`, `height`, `type`, optional `source`, optional opaque `contentID` and optional typed `animatedPreview`. Unknown item fields are retained in `additionalFields` as `GifSnapJSON`; numeric unknown fields use `Double`. `GifSnapResponse` exposes `data`, `pagination` and optional `query`. Provider IDs are not interchangeable. Never use `contentID` in place of the returned lookup ID.
 
 ### Errors and cancellation
 
@@ -120,7 +120,7 @@ There are no automatic retries. `Retry-After` seconds or HTTP dates are exposed 
 
 `GifSnapUI` pins [SDWebImage 5.21.7](https://github.com/SDWebImage/SDWebImage/releases/tag/5.21.7), an MIT-licensed native image loader. It uses `SDAnimatedImageView`, not `AsyncImage` or per-cell web views. GIF support is built in. On first use, the picker registers SDWebImage's ImageIO-backed `SDImageAWebPCoder` in its shared coder registry for animated WebP support on the supported iOS versions. It does not replace existing coders.
 
-The full returned media URL is tried first, then a distinct preview URL once on failure, then a visible unavailable state. The preview can be static. Each card keeps a fixed media box while loading. Decoder thumbnails are constrained to 480×480 pixels, each active animation uses a 4 MiB frame-buffer budget, and a dedicated loader allows four downloads concurrently. Dedicated image-cache eviction budgets are 32 MiB in memory and 64 MiB on disk; these are cache targets, not a guarantee of total process memory use. GIF/WebP source downloads can be large. Animated assets are tested; video URLs are not supported by this picker.
+A validated small `animatedPreview` is tried first when available, followed by the full returned media URL, a distinct legacy preview URL, then a visible unavailable state. The selected item keeps its original full sharing URL. The preview can be static. Each card keeps a fixed media box while loading. Decoder thumbnails are constrained to 480×480 pixels, each active animation uses a 4 MiB frame-buffer budget, and a dedicated loader allows four downloads concurrently. Dedicated image-cache eviction budgets are 32 MiB in memory and 64 MiB on disk; these are cache targets, not a guarantee of total process memory use. GIF/WebP source downloads can be large. Animated assets are tested; video URLs are not supported by this picker.
 
 The view uses native buttons/text fields, accessible selection labels, Dynamic Type text and system colors. Reduce Motion stops animation while keeping media visible. Native image views stop playback when detached and cancel outstanding loads during teardown. Very long titles are truncated visually but the selection accessibility label includes the full title. Provider labels are not displayed or read aloud by the picker; source metadata remains available on the selected record. Test extreme Dynamic Type and host-specific layouts in your app before shipping.
 

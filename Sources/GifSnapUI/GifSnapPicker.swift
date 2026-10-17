@@ -46,7 +46,7 @@ public enum GifSnapTheme: String, Sendable { case system, light, dark }
                     ForEach(model.items) { item in
                         Button { onSelect(item) } label: {
                             VStack(alignment: .leading, spacing: 6) {
-                                AnimatedMedia(full: item.url, preview: item.previewURL, isAnimating: !reduceMotion)
+                                AnimatedMedia(full: item.url, preview: item.previewURL, isAnimating: !reduceMotion, animatedPreview: item.animatedPreview)
                                     .frame(height: 132).frame(maxWidth: .infinity)
                                     .background(Color(uiColor: .tertiarySystemFill))
                                     .clipShape(RoundedRectangle(cornerRadius: 10))

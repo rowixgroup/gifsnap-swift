@@ -26,6 +26,7 @@ struct AnimatedMedia: UIViewRepresentable {
     let full: String
     let preview: String
     let isAnimating: Bool
+    var animatedPreview: GifSnapAnimatedPreview? = nil
 
     func makeCoordinator() -> Coordinator { Coordinator() }
     func makeUIView(context: Context) -> MediaContainer {
@@ -38,7 +39,7 @@ struct AnimatedMedia: UIViewRepresentable {
         return view
     }
     func updateUIView(_ view: MediaContainer, context: Context) {
-        let urls = GifSnapMediaCandidates(full: full, preview: preview).urls
+        let urls = GifSnapMediaCandidates(full: full, preview: preview, animatedPreview: animatedPreview).urls
         context.coordinator.update(view: view, urls: urls, isAnimating: isAnimating)
     }
     static func dismantleUIView(_ view: MediaContainer, coordinator: Coordinator) {

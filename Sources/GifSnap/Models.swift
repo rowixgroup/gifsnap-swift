@@ -27,6 +27,32 @@ public indirect enum GifSnapJSON: Codable, Equatable, Sendable {
     }
 }
 
+/// Optional small animation. The original GIF URL remains the sharing URL.
+public struct GifSnapAnimatedPreview: Decodable, Equatable, Sendable {
+    public let url: String
+    public let mimeType: String
+    public let width: Int
+    public let height: Int
+    public let byteSize: Int?
+    public let animated: Bool
+    public init(url: String, mimeType: String, width: Int, height: Int, byteSize: Int? = nil, animated: Bool = true) throws {
+        let extensions = ["image/gif":"gif", "image/webp":"webp", "video/mp4":"mp4", "video/webm":"webm"]
+        let ext = URL(string: url)?.pathExtension.lowercased() ?? ""
+        guard GifSnapURL.isHTTP(url), let expected = extensions[mimeType], ext.isEmpty || ext == expected,
+              animated, (1...480).contains(width), (1...480).contains(height),
+              byteSize.map({ (1...524288).contains($0) }) ?? true else { throw GifSnapError.invalidResponse }
+        self.url = url; self.mimeType = mimeType; self.width = width; self.height = height
+        self.byteSize = byteSize; self.animated = animated
+    }
+    private enum CodingKeys: String, CodingKey { case url, mimeType = "mime_type", width, height, byteSize = "byte_size", animated }
+    public init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        try self.init(url: c.decode(String.self, forKey: .url), mimeType: c.decode(String.self, forKey: .mimeType),
+                      width: c.decode(Int.self, forKey: .width), height: c.decode(Int.self, forKey: .height),
+                      byteSize: c.decodeIfPresent(Int.self, forKey: .byteSize), animated: c.decode(Bool.self, forKey: .animated))
+    }
+}
+
 public struct GifSnapGif: Decodable, Identifiable, Equatable, Sendable {
     public let id: String
     public let title: String
@@ -39,13 +65,14 @@ public struct GifSnapGif: Decodable, Identifiable, Equatable, Sendable {
     public let source: String?
     /// Optional opaque server-verified identity. Never substitute it for the lookup ID.
     public let contentID: String?
+    public let animatedPreview: GifSnapAnimatedPreview?
     public let additionalFields: [String: GifSnapJSON]
     public var mediaURL: URL { URL(string: url)! }
     public var previewMediaURL: URL { URL(string: previewURL)! }
 
     public init(id: String, title: String, url: String, previewURL: String, width: Int, height: Int,
                 type: GifSnapMediaType = .gif, source: String? = nil, contentID: String? = nil,
-                additionalFields: [String: GifSnapJSON] = [:]) throws {
+                additionalFields: [String: GifSnapJSON] = [:], animatedPreview: GifSnapAnimatedPreview? = nil) throws {
         guard !id.isEmpty, GifSnapURL.isHTTP(url), GifSnapURL.isHTTP(previewURL), width >= 0, height >= 0,
               contentID == nil || !contentID!.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
             throw GifSnapError.invalidResponse
@@ -53,9 +80,11 @@ public struct GifSnapGif: Decodable, Identifiable, Equatable, Sendable {
         self.id = id; self.title = title; self.url = url; self.previewURL = previewURL
         self.width = width; self.height = height; self.type = type; self.source = source
         self.contentID = contentID; self.additionalFields = additionalFields
+        self.animatedPreview = animatedPreview
     }
     private enum Keys: String, CodingKey, CaseIterable {
         case id, title, url, previewURL = "preview_url", width, height, type, source, contentID = "content_id"
+        case animatedPreview = "animated_preview"
     }
     private struct AnyKey: CodingKey {
         let stringValue: String
@@ -77,7 +106,8 @@ public struct GifSnapGif: Decodable, Identifiable, Equatable, Sendable {
                       url: c.decode(String.self, forKey: .url), previewURL: c.decode(String.self, forKey: .previewURL),
                       width: c.decode(Int.self, forKey: .width), height: c.decode(Int.self, forKey: .height),
                       type: c.decode(GifSnapMediaType.self, forKey: .type), source: source,
-                      contentID: identity, additionalFields: extra)
+                      contentID: identity, additionalFields: extra,
+                      animatedPreview: try? c.decode(GifSnapAnimatedPreview.self, forKey: .animatedPreview))
     }
 }
 
@@ -135,11 +165,12 @@ public struct GifSnapIdentitySet: Sendable {
     }
 }
 
-/// At most two distinct HTTP media candidates, always full media first.
+/// Small image animation, original animation, then legacy poster; at most three attempts.
 public struct GifSnapMediaCandidates: Equatable, Sendable {
     public let urls: [URL]
-    public init(full: String, preview: String) {
+    public init(full: String, preview: String, animatedPreview: GifSnapAnimatedPreview? = nil) {
         var seen = Set<String>()
-        urls = [full, preview].filter { GifSnapURL.isHTTP($0) && seen.insert($0).inserted }.compactMap(URL.init(string:))
+        let small = animatedPreview.flatMap { $0.mimeType.hasPrefix("image/") ? $0.url : nil }
+        urls = [small, full, preview].compactMap { $0 }.filter { GifSnapURL.isHTTP($0) && seen.insert($0).inserted }.compactMap(URL.init(string:))
     }
 }
